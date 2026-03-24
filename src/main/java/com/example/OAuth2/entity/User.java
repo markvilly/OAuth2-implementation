@@ -6,17 +6,20 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserExcetion;
+
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Table(name="users")
 public class User implements UserDetails {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
@@ -31,7 +34,7 @@ public class User implements UserDetails {
     @Column(nullable=false, unique=true)
     private String email;
 
-    @Column
+    @Column(nullable=false)
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
@@ -39,12 +42,15 @@ public class User implements UserDetails {
     private boolean enabled;
     
     Column(nullable=false)
-    private Set<Role> role;
+    private Set<Role> roles;
     
     
     private LocalDateTime createdAt;
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return roles.stream()
+    }
 
 
 }
