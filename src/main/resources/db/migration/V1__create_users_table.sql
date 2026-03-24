@@ -7,3 +7,4 @@ CREATE TABLE users (
     enabled BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
