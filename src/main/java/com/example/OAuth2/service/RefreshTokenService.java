@@ -1,6 +1,7 @@
 package com.example.oauth2.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -48,17 +49,17 @@ public class RefreshTokenService {
             .orElseThrow(()-> new RuntimeException("Not Found"));
 
         existingToken.setRevoked(true);
+        refreshtokenrepo.save(existingToken);
 
-        RefreshToken newToken = RefreshToken.builder()
-            .token(UUID.randomUUID().toString())
-            .user(existingToken.getUser())
-            .expiryDate(LocalDateTime.now().plusDays(7))
-            .build();
-        return refreshtokenrepo.save(newToken);
+        RefreshToken newToken = createRefreshToken(existingToken.getUser());
+        return newToken;
     }
 
     public void revokeAllUserTokens(User user){
-        
+        List<RefreshToken> allTokens = refreshtokenrepo.findByUser(user);
+        allTokens.forEach(token -> token.setRevoked(true));
+        refreshtokenrepo.saveAll(allTokens);
     }
+    
 
 }
